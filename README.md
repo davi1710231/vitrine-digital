@@ -195,6 +195,7 @@ Testes de Interface (Front-end):
 Para rodar os testes de componentes e renderização no React:
 cd frontend
 npm run test
+
 🔗 Documentações utilizadas
 As referências abaixo foram fundamentais para a definição arquitetural e resolução de desafios técnicos durante o desenvolvimento da plataforma:
 📖 Front-end: Documentação Oficial do React
@@ -202,9 +203,11 @@ As referências abaixo foram fundamentais para a definição arquitetural e reso
 📖 Back-end: Documentação Oficial do Spring Boot
 📖 Infraestrutura: Documentação de Referência do Docker
 📖 Padronização: Conventional Commits (Padrão de Mensagens)
+
 👥 Autores
 👤 Nome	💼 LinkedIn	📤 GitHub	🎓 Instituição
 Davi Vinicius Barbosa de Oliveira	Seu LinkedIn	Seu GitHub	Engenharia de Software - PUC Minas
+
 🤝 Contribuição
 Contribuições são o que tornam a comunidade de código aberto um lugar incrível para aprender, inspirar e criar. Qualquer contribuição que você fizer será muito apreciada.
 1 Faça um Fork do projeto.
@@ -212,6 +215,7 @@ Contribuições são o que tornam a comunidade de código aberto um lugar incrí
 3 Faça o commit das suas alterações (git commit -m 'feat: Adiciona funcionalidade X'). Recomendamos o uso de Conventional Commits.
 4 Faça o push para a branch (git push origin feature/MinhaFeature).
 5 Abra um Pull Request (PR).
+
 🙏 Agradecimentos
 Gostaria de registrar meus agradecimentos às instituições e profissionais que guiaram a excelência técnica na construção deste projeto:
 Engenharia de Software PUC Minas - Pelo apoio institucional, infraestrutura acadêmica e fomento contínuo à inovação e boas práticas de engenharia.
@@ -219,5 +223,6 @@ Prof. Dr. João Paulo Aramuni - Pelos valiosos ensinamentos sobre Arquitetura de
 Fernanda Kipper - Pelos conteúdos excepcionais de Desenvolvimento Web, DevOps e melhores práticas em Front-end.
 Rodrigo Branas - Pela didática ímpar na aplicação de Clean Architecture e Clean Code.
 Código Fonte TV - Pelo vasto conteúdo, tutoriais e apoio incondicional à comunidade de Desenvolvimento.
+
 📄 Licença
 Este projeto é distribuído e protegido sob os termos da Licença MIT. Consulte o arquivo LICENSE para mais detalhes.
