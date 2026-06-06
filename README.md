@@ -1,6 +1,9 @@
 # Vitrine-Digital
 Repositório para a documentação do projeto Vitrine Digital - PUC Minas
 # 🏷️ Vitrine Digital 👨‍💻
+<p align="center">
+  <img src="Gemini_Generated_Image_14z3x414z3x414z3.png" width="200" alt="Logo Vitrine Digital">
+</p>
 
 > Plataforma interativa de e-commerce e catálogo digital projetada para conectar consumidores a produtos de forma ágil, segura e altamente intuitiva.
 
