@@ -1,0 +1,327 @@
+' ==========================================
+' 1. DIAGRAMA DE ARQUITETURA (CONTAINERS)
+' ==========================================
+@startuml
+skinparam componentStyle uml2
+left to right direction
+skinparam packageStyle rectangle
+
+actor "Cliente" as cliente
+actor "Administrador" as admin
+
+package "Vitrine Digital" {
+    component [Aplicação Web\n(React / Vite)] as front
+    component [API REST\n(Java / Spring Boot)] as back
+    database "Banco de Dados\n(PostgreSQL)" as db
+}
+
+cloud "Gateway de Pagamento" as gateway
+cloud "API de Logística" as logistica
+
+cliente --> front : Navega e compra (HTTPS)
+admin --> front : Gerencia catálogo (HTTPS)
+
+front --> back : Requisições API (JSON/HTTPS)
+back --> db : Persistência (JPA/Hibernate)
+back --> gateway : Autoriza transações (REST/HTTPS)
+back --> logistica : Cotiza prazos e fretes (REST/HTTPS)
+@enduml
+
+' ==========================================
+' 2. DIAGRAMA DE COMPONENTES
+' ==========================================
+@startuml
+package "Apresentação (Front-end - React)" {
+    [Components / Pages] -> [API Services (Axios)] : Utiliza
+}
+
+package "Negócio (Back-end - Spring Boot)" {
+    [API Services (Axios)] ..> [REST Controllers] : Requisições HTTP
+    
+    package "Camadas Internas" {
+        [REST Controllers] -> [Business Services] : Encaminha para
+        [Business Services] -> [JPA Repositories] : Consulta/Persiste
+        [REST Controllers] ..> [Security / JWT Filter] : Protegido por
+    }
+}
+
+database "PostgreSQL" {
+    [JPA Repositories] --> [Tabelas do Banco] : SQL / JDBC
+}
+@enduml
+
+' ==========================================
+' 3. DIAGRAMA DE IMPLANTAÇÃO
+' ==========================================
+@startuml
+node "Dispositivo do Cliente" {
+    node "Navegador Web" {
+        artifact "Aplicação React (Execução)" as app_exec
+    }
+}
+
+node "Nuvem Vercel" <<PaaS>> {
+    node "Servidor de Borda (CDN)" {
+        artifact "Arquivos Estáticos (HTML/CSS/JS)" as artefato_front
+    }
+}
+
+node "Nuvem Cloud (Ex: Railway / AWS)" <<IaaS/PaaS>> {
+    node "Container de Aplicação" {
+        artifact "VitrineDigitalAPI.jar (Spring Boot)" as artefato_back
+    }
+    
+    node "Servidor de Banco de Dados" {
+        database "PostgreSQL DBMS" as db_server
+    }
+}
+
+node "Gateway Externo (Pagamentos/Logística)" <<Cloud>> as ext_services
+
+Navegador Web -- Servidor de Borda : HTTPS (Download do App)
+app_exec -- Container de Aplicação : HTTPS / JSON (Chamadas API)
+Container de Aplicação -- Servidor de Banco de Dados : Conexão JDBC (Porta 5432)
+Container de Aplicação -- ext_services : HTTPS / REST
+@enduml
+
+' ==========================================
+' 4. DIAGRAMA DE CLASSES
+' ==========================================
+@startuml
+skinparam classAttributeIconSize 0
+left to right direction
+
+abstract class Usuario {
+    - id: Long
+    - nome: String
+    - email: String
+    - senha: String
+    + autenticar(): Boolean
+}
+
+class Cliente {
+    - cpf: String
+    - telefone: String
+    - enderecoEntrega: String
+    + visualizarHistoricoPedidos(): List<Pedido>
+}
+
+class Administrador {
+    - matriculaFuncional: String
+    + cadastrarProduto(p: Produto): Void
+    + atualizarEstoque(p: Produto, qtd: int): Void
+}
+
+class Produto {
+    - id: Long
+    - nome: String
+    - descricao: String
+    - preco: Double
+    - quantidadeEstoque: Integer
+    + atualizarPreco(novoPreco: Double): Void
+    + deduzirEstoque(qtd: int): Void
+}
+
+class Categoria {
+    - id: Long
+    - nome: String
+    - descricao: String
+}
+
+class Carrinho {
+    - id: Long
+    - valorTotal: Double
+    + adicionarItem(item: ItemCarrinho): Void
+    + removerItem(item: ItemCarrinho): Void
+    + limparCarrinho(): Void
+}
+
+class ItemCarrinho {
+    - id: Long
+    - quantidade: Integer
+    - precoUnitario: Double
+    + calcularSubtotal(): Double
+}
+
+class Pedido {
+    - id: Long
+    - dataCriacao: Date
+    - status: String
+    - valorTotal: Double
+    - frete: Double
+    + atualizarStatus(novoStatus: String): Void
+}
+
+class ItemPedido {
+    - id: Long
+    - quantidade: Integer
+    - precoPraticado: Double
+}
+
+class Pagamento {
+    - id: Long
+    - transacaoId: String
+    - formaPagamento: String
+    - statusPagamento: String
+    + processarTransacao(): Boolean
+}
+
+Usuario <|-- Cliente
+Usuario <|-- Administrador
+
+Cliente "1" -- "1" Carrinho : possui >
+Cliente "1" -- "0..*" Pedido : realiza >
+
+Carrinho "1" *-- "0..*" ItemCarrinho : contem >
+ItemCarrinho "0..*" --> "1" Produto : refere-se a >
+
+Produto "0..*" --> "1" Categoria : pertence a >
+
+Pedido "1" *-- "1..*" ItemPedido : composto por >
+ItemPedido "0..*" --> "1" Produto : refere-se a >
+Pedido "1" -- "1" Pagamento : possui >
+@enduml
+
+' ==========================================
+' 5. DIAGRAMA DE SEQUÊNCIA (AUTENTICAÇÃO)
+' ==========================================
+@startuml
+autonumber
+actor Cliente
+participant "Front-end (React)" as Front
+participant "AuthController" as Controller
+participant "AuthService" as Service
+participant "UsuarioRepository" as Repo
+database "PostgreSQL" as DB
+
+Cliente -> Front: Preenche e-mail e senha
+Front -> Controller: POST /api/login {email, senha}
+Controller -> Service: autenticarUsuario(email, senha)
+Service -> Repo: buscarPorEmail(email)
+Repo -> DB: SELECT * FROM usuarios WHERE email = ?
+DB --> Repo: Dados do Usuário
+Repo --> Service: Entidade Usuario
+Service -> Service: Validar hash da senha
+Service -> Service: Gerar Token JWT
+Service --> Controller: Token JWT
+Controller --> Front: 200 OK {token, userDetails}
+Front --> Cliente: Redireciona para Dashboard
+@enduml
+
+' ==========================================
+' 6. DIAGRAMA DE SEQUÊNCIA (CHECKOUT)
+' ==========================================
+@startuml
+autonumber
+actor Cliente
+participant "Front-end" as Front
+participant "PedidoController" as Controller
+participant "PedidoService" as Service
+participant "ProdutoRepository" as ProdRepo
+participant "PedidoRepository" as PedidoRepo
+participant "Gateway de Pagamento" as Gateway <<External>>
+
+Cliente -> Front: Clica em "Finalizar Compra"
+Front -> Controller: POST /api/pedidos/checkout {carrinho, dadosPagamento}
+Controller -> Service: processarCheckout(carrinho, dadosPagamento)
+
+loop Para cada item no carrinho
+    Service -> ProdRepo: verificarEstoque(produtoId, qtd)
+    ProdRepo --> Service: Estoque OK
+end
+
+Service -> PedidoRepo: salvar(novoPedido [Status: Pendente])
+PedidoRepo --> Service: Pedido salvo
+
+Service -> Gateway: POST /transacoes {valor, cartao}
+Gateway --> Service: 200 OK {status: "Aprovado"}
+
+Service -> ProdRepo: deduzirEstoque(itens)
+Service -> PedidoRepo: atualizarStatus(pedidoId, "Pago")
+
+Service --> Controller: Resposta {pedidoId, status}
+Controller --> Front: 200 OK {mensagem: "Pagamento Aprovado"}
+Front --> Cliente: Exibe tela de Sucesso
+@enduml
+
+' ==========================================
+' 7. DIAGRAMA DE COMUNICAÇÃO
+' ==========================================
+@startuml
+skinparam componentStyle rectangle
+left to right direction
+
+actor Cliente as cliente
+object "UI : Front-end" as front
+object "Ctrl : CarrinhoController" as ctrl
+object "Srv : CarrinhoService" as srv
+object "Car : Carrinho" as car
+
+cliente -> front : 1: Clica em "Adicionar"
+front -> ctrl : 1.1: POST /api/carrinho
+ctrl -> srv : 1.1.1: adicionarItem(produtoId, qtd)
+srv -> car : 1.1.1.1: update(item)
+@enduml
+
+' ==========================================
+' 8. DIAGRAMA DE ESTADOS
+' ==========================================
+@startuml
+scale 600 width
+
+[*] --> AguardandoPagamento : Pedido Criado (Checkout)
+AguardandoPagamento --> Pago : Gateway: Transação Aprovada
+AguardandoPagamento --> Cancelado : Gateway: Transação Recusada
+Pago --> EmSeparacao : Estoque: Itens Reservados
+EmSeparacao --> Enviado : Logística: Coletado pela Transportadora
+Enviado --> Entregue : Logística: Confirmação de Entrega
+Cancelado --> [*]
+Entregue --> [*]
+@enduml
+
+' ==========================================
+' 9. MODELO ER (BANCO DE DADOS)
+' ==========================================
+@startuml
+skinparam linetype ortho
+
+entity "Usuarios" as usuarios {
+  * id_usuario : SERIAL <<PK>>
+  --
+  nome : VARCHAR(100)
+  email : VARCHAR(100) <<UNIQUE>>
+  senha_hash : VARCHAR(255)
+  perfil : VARCHAR(20)
+}
+
+entity "Produtos" as produtos {
+  * id_produto : SERIAL <<PK>>
+  --
+  nome : VARCHAR(100)
+  descricao : TEXT
+  preco : DECIMAL(10,2)
+  quantidade_estoque : INT
+}
+
+entity "Pedidos" as pedidos {
+  * id_pedido : SERIAL <<PK>>
+  --
+  id_usuario : INT <<FK>>
+  data_criacao : TIMESTAMP
+  status : VARCHAR(50)
+  valor_total : DECIMAL(10,2)
+}
+
+entity "Itens_Pedido" as itens_pedido {
+  * id_item : SERIAL <<PK>>
+  --
+  id_pedido : INT <<FK>>
+  id_produto : INT <<FK>>
+  quantidade : INT
+  preco_unitario : DECIMAL(10,2)
+}
+
+usuarios ||--o{ pedidos : "realiza"
+pedidos ||--|{ itens_pedido : "contem"
+produtos ||--o{ itens_pedido : "referenciado em"
+@enduml
