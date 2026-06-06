@@ -156,8 +156,8 @@ Abaixo estão as interfaces principais projetadas para a experiência do usuári
 
 | Tela | Captura de Tela / Fluxo |
 | :--- | :--- |
-| **Página Inicial (Catálogo)** | ![Tela Home](https://github.com/davi1710231/vitrine-digital/blob/main/Gemini_Generated_Image_dqdctodqdctodqdc.png?raw=true) |
-| **Autenticação Segura** | ![Tela Login](Gemini_Generated_Image_dqdctodqdctodqdc.png) |
+| **Página Inicial (Catálogo)** | ![Tela Home] |
+| **Autenticação Segura** | ![Tela Login]|
 | **Carrinho de Compras** | *Em desenvolvimento 🚧* |
 
 ---
