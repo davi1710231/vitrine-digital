@@ -157,7 +157,7 @@ Abaixo estão as interfaces principais projetadas para a experiência do usuári
 | Tela | Captura de Tela / Fluxo |
 | :--- | :--- |
 | **Página Inicial (Catálogo)** | <img src="Gemini_Generated_Image_uuyeu6uuyeu6uuye.png" width="500" alt="Print da Tela Inicial"> |
-| **Autenticação Segura** | <img src="Gemini_Generated_Image_dqdctodqdctodqdc.png" width="500" alt="Print da Tela de Login"> |
+| **Autenticação Segura** | <img src="Gemini_Generated_Image_uuyeu6uuyeu6uuye.png" width="500" alt="Print da Tela de Login"> |
 | **Carrinho de Compras** | *Em desenvolvimento 🚧* |
 
 ---
