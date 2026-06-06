@@ -209,7 +209,8 @@ As referências abaixo foram fundamentais para a definição arquitetural e reso
 
 👥 Autores
 👤 Nome	💼 LinkedIn	📤 GitHub	🎓 Instituição
-Davi Vinicius Barbosa de Oliveira	Seu LinkedIn	Seu GitHub	Engenharia de Software - PUC Minas
+Davi Vinicius Barbosa de Oliveira	(https://www.linkedin.com/in/davivinicius/)	(https://github.com/davi1710231)
+Engenharia de Software - PUC Minas
 
 🤝 Contribuição
 Contribuições são o que tornam a comunidade de código aberto um lugar incrível para aprender, inspirar e criar. Qualquer contribuição que você fizer será muito apreciada.
